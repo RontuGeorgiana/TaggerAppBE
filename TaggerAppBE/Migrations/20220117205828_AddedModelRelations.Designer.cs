@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TaggerAppBE.Data;
 
 namespace TaggerAppBE.Migrations
 {
     [DbContext(typeof(TaggerContext))]
-    partial class TaggerContextModelSnapshot : ModelSnapshot
+    [Migration("20220117205828_AddedModelRelations")]
+    partial class AddedModelRelations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -58,18 +60,6 @@ namespace TaggerAppBE.Migrations
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Reviews")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Stars")
-                        .HasColumnType("int");
-
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
@@ -95,12 +85,6 @@ namespace TaggerAppBE.Migrations
                     b.Property<DateTime?>("DateModified")
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Posts")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -136,23 +120,15 @@ namespace TaggerAppBE.Migrations
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Posts")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("TaggerAppBE.Models.One_to_Many.LikedCategory", b =>
+            modelBuilder.Entity("TaggerAppBE.Models.One_to_Many.FollowedTag", b =>
                 {
-                    b.Property<Guid>("ProfileId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CategoryId")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("DateCreated")
@@ -163,13 +139,39 @@ namespace TaggerAppBE.Migrations
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid?>("ProfileId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ProfleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProfileId");
+
+                    b.ToTable("FollowedTags");
+                });
+
+            modelBuilder.Entity("TaggerAppBE.Models.One_to_Many.LikedCategory", b =>
+                {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("ProfileId", "CategoryId");
+                    b.Property<DateTime?>("DateCreated")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2");
 
-                    b.HasIndex("CategoryId");
+                    b.Property<DateTime?>("DateModified")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("ProfileId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProfileId");
 
                     b.ToTable("LikedCategories");
                 });
@@ -187,18 +189,6 @@ namespace TaggerAppBE.Migrations
                     b.Property<DateTime?>("DateModified")
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Password")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Username")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("role")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -218,9 +208,6 @@ namespace TaggerAppBE.Migrations
                     b.Property<DateTime?>("DateModified")
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -271,21 +258,22 @@ namespace TaggerAppBE.Migrations
                     b.Navigation("Tag");
                 });
 
+            modelBuilder.Entity("TaggerAppBE.Models.One_to_Many.FollowedTag", b =>
+                {
+                    b.HasOne("TaggerAppBE.Models.One_to_One.Profile", "Profile")
+                        .WithMany("FollowedTags")
+                        .HasForeignKey("ProfileId");
+
+                    b.Navigation("Profile");
+                });
+
             modelBuilder.Entity("TaggerAppBE.Models.One_to_Many.LikedCategory", b =>
                 {
-                    b.HasOne("TaggerAppBE.Models.One_to_Many.Category", "Category")
-                        .WithMany("LikedCategories")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("TaggerAppBE.Models.One_to_One.Profile", "Profile")
                         .WithMany("LikedCategories")
                         .HasForeignKey("ProfileId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Category");
 
                     b.Navigation("Profile");
                 });
@@ -314,8 +302,6 @@ namespace TaggerAppBE.Migrations
             modelBuilder.Entity("TaggerAppBE.Models.One_to_Many.Category", b =>
                 {
                     b.Navigation("Entries");
-
-                    b.Navigation("LikedCategories");
                 });
 
             modelBuilder.Entity("TaggerAppBE.Models.One_to_Many.User", b =>
@@ -327,6 +313,8 @@ namespace TaggerAppBE.Migrations
 
             modelBuilder.Entity("TaggerAppBE.Models.One_to_One.Profile", b =>
                 {
+                    b.Navigation("FollowedTags");
+
                     b.Navigation("LikedCategories");
                 });
 #pragma warning restore 612, 618

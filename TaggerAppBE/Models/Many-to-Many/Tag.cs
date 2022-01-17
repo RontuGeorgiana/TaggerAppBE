@@ -8,8 +8,9 @@ namespace TaggerAppBE.Models.Many_to_Many
 {
     public class Tag: BaseEntity
     {
-        string name { get; set; }
+        public string Name { get; set; }
+        public int Posts { get; set; }
 
-        int posts { get; set; }
+        public ICollection<TagEntryRelation> TagEntryRelations { get; set; }
     }
 }
