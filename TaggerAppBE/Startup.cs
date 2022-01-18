@@ -13,6 +13,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TaggerAppBE.Data;
+using TaggerAppBE.Repositories.DatabaseRepository;
+using TaggerAppBE.Services;
 
 namespace TaggerAppBE
 {
@@ -36,6 +38,10 @@ namespace TaggerAppBE
             });
 
             services.AddDbContext<TaggerContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddTransient<ICategoryRepository, CategoryRepository>();
+            services.AddTransient<ICategoryService, CategoryService>();
+            services.AddTransient<ITagRepository, TagRepository>();
+            services.AddTransient<ITagService, TagService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
