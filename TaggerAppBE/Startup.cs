@@ -11,6 +11,7 @@ using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using TaggerAppBE.Data;
 using TaggerAppBE.Repositories.DatabaseRepository;
@@ -31,7 +32,8 @@ namespace TaggerAppBE
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddControllers();
+            services.AddControllers().AddJsonOptions(x =>
+                x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve);
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "TaggerAppBE", Version = "v1" });
@@ -42,6 +44,8 @@ namespace TaggerAppBE
             services.AddTransient<ICategoryService, CategoryService>();
             services.AddTransient<ITagRepository, TagRepository>();
             services.AddTransient<ITagService, TagService>();
+            services.AddTransient<IEntryRepository, EntryRepository>();
+            services.AddTransient<IEntryService, EntryService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
