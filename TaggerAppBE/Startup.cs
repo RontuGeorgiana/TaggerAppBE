@@ -16,6 +16,8 @@ using System.Threading.Tasks;
 using TaggerAppBE.Data;
 using TaggerAppBE.Repositories.DatabaseRepository;
 using TaggerAppBE.Services;
+using TaggerAppBE.Utilities;
+using TaggerAppBE.Utilities.JWTUtils;
 
 namespace TaggerAppBE
 {
@@ -39,6 +41,7 @@ namespace TaggerAppBE
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "TaggerAppBE", Version = "v1" });
             });
 
+            services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             services.AddDbContext<TaggerContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddTransient<ICategoryRepository, CategoryRepository>();
             services.AddTransient<ICategoryService, CategoryService>();
@@ -46,6 +49,8 @@ namespace TaggerAppBE
             services.AddTransient<ITagService, TagService>();
             services.AddTransient<IEntryRepository, EntryRepository>();
             services.AddTransient<IEntryService, EntryService>();
+            services.AddTransient<IUserService, UserService>();
+            services.AddScoped<IJWTUtils, JWTUtils>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -61,6 +66,8 @@ namespace TaggerAppBE
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseMiddleware<JWTMiddleware>();
 
             app.UseAuthorization();
 

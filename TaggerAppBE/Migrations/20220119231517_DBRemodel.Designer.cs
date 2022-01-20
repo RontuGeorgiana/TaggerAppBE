@@ -10,8 +10,8 @@ using TaggerAppBE.Data;
 namespace TaggerAppBE.Migrations
 {
     [DbContext(typeof(TaggerContext))]
-    [Migration("20220117213523_AddedTableFields")]
-    partial class AddedTableFields
+    [Migration("20220119231517_DBRemodel")]
+    partial class DBRemodel
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -193,13 +193,13 @@ namespace TaggerAppBE.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Password")
+                    b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Role")
+                        .HasColumnType("int");
 
                     b.Property<string>("Username")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("role")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
